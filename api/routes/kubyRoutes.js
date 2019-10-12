@@ -17,6 +17,9 @@ module.exports = function(app) {
     .get(controller.list_all_books)       //list of all books
     .post(controller.upload_a_book)
 
+  app.route('/findBook/:word')
+   .get(controller.search_book_by_title)
+
   app.route('/location/:location')
     .get(controller.search_one_location)  //info of one location (should contain list of books)
 

@@ -26,6 +26,11 @@ exports.list_all_books = function(req, res) {
 
 exports.upload_a_book = function(req, res) {
   var new_book = new Book(req.body);
+  Location.find( { lat:req.body.lat, lon:req.body.lon }, function(err, location) {
+    if (err) {}
+    new_book.location = location[0]._id;
+    Location.updateOne({_id:location[0]._id},{$push: {books:new_book._id}}, function(err, loc){});
+  });
   new_book.save(function(err, book) {
     if (err)
       res.send(err);
@@ -36,7 +41,7 @@ exports.upload_a_book = function(req, res) {
 exports.retrieve_a_book = function(req, res) {
   console.log(req.params.isbn)
   //TODO add pickup_book function that reserves the book and gives a codi recollida
-  Book.remove({ _id:req.params.isbn }, function(err, book) {
+  Book.remove({ isbn:req.params.isbn, location:req.params.location }, function(err, book) {
     console.log(req.params.isbn)
     if (err)
       res.send(err);
@@ -48,7 +53,6 @@ exports.retrieve_a_book = function(req, res) {
 
 exports.add_location = function(req, res) {
   var new_location = new Location(req.body);
-  console.log("POST");
   console.log(req.body)
   new_location.save(function(err, location) {
     if (err)
@@ -57,6 +61,7 @@ exports.add_location = function(req, res) {
   });
 };
 
+//hauria de retornar tots els llibres de la location
 exports.search_one_location = function(req, res) {
   let location = req.params.location;
   //console.log(location);
@@ -68,14 +73,24 @@ exports.search_one_location = function(req, res) {
 };
 
 exports.search_locations = function(req, res) {
-  console.log("GET");
-  Location.find({}, function(err, location) {
+  Location.find({}, function(err, locations) {
     if (err)
       res.send(err);
-    res.json(location);
+    res.json(locations);
   });
 };
 
+exports.search_book_by_title = function(req, res) {
+ console.log("GET");
+ let word = req.params.word;
+ console.log(find);
+ Book.find({title: new RegExp(word, "i")}, function(err, book) {
+   console.log(book);
+   if (err)
+     res.send(err);
+   res.json(book);
+ });
+};
 
 //login, logout, sign in management
 
