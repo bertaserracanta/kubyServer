@@ -9,23 +9,28 @@ module.exports = function(app) {
 
   // controller Routes
 
-  app.route('/book/:isbn')
+  app.route('/book/:_id')
     .get(controller.check_book)           //info of one book
-    .delete(controller.retrieve_a_book);  //inside there is the waition for bar confirmation
+    .delete(controller.retrieve_a_book)  //inside there is the waition for bar confirmation
+
+  app.route('/book')
+    .post(controller.upload_a_book)
 
   app.route('/books')
     .get(controller.list_all_books)       //list of all books
-    .post(controller.upload_a_book)
 
   app.route('/findBook/:word')
    .get(controller.search_book_by_title)
 
-  app.route('/location/:location')
+  app.route('/location/:name')
     .get(controller.search_one_location)  //info of one location (should contain list of books)
+    .delete(controller.del_location)
 
   app.route('/location')
-    .get(controller.search_locations)     //list of all locations
     .post(controller.add_location)
+
+  app.route('/locations')
+    .get(controller.search_locations)     //list of all locations
 
   app.route('/login')
     .get(controller.loginform)
